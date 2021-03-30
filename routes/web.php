@@ -26,6 +26,17 @@ Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login')->name('login.post');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout.get');
 Route::group(['middleware' => ['auth']], function() {
+    Route::group(['prefix' => 'users/{id}'], function () {
+        // n番目ユーザをフォローする
+        Route::post('follow', 'UserFollowController@store')->name('user.follow');
+        // n番目のユーザをアンフォローする
+        Route::delete('unfollow', 'UserFollowController@destroy')->name('user.unfollow');
+        // n番目のユーザがフォローしているユーザ一覧を表示する
+        Route::get('followings', 'UsersController@followings')->name('users.followings');
+        // n番目のユーザをフォローしているユーザ一覧を表示する
+        Route::get('followers', 'UsersController@followers')->name('users.followers');
+    });
+    
     Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
     Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
 });
